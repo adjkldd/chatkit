@@ -16,3 +16,17 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+
+#app {
+  height: 100%;
+}
+</style>

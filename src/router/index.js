@@ -8,6 +8,9 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/', component: LoginForm
+  },
+  {
     path: '/dashboard', component: Dashboard
   },
   {

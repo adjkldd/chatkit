@@ -1,28 +1,57 @@
 <template>
   <div>
-    <el-form class="login-form">
+    <el-form :model="loginForm" :rules="rules" ref="loginForm" class="login-form">
       <h3 class="form-title">Log In</h3>
-      <el-form-item>
-        <el-input v-model="username" placeholder="your username" />
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="loginForm.username" placeholder="your username" />
+        <p v-if="err_msg" class="error-text">{{err_msg}}</p>
       </el-form-item>
       <el-form-item>
-        <el-button class="login-btn" type="primary" @click="logIn">Log In</el-button>
+        <el-button
+          :loading="logining"
+          class="login-btn"
+          type="primary"
+          @click="logIn('loginForm')"
+        >Log In</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
+import store from "../store";
+
 export default {
   name: "LoginForm",
   data() {
     return {
-      username: ""
+      logining: false,
+      loginForm: {
+        username: ""
+      },
+      rules: {
+        username: [{ required: true, message: "请输入用户名", trigger: "blur" }]
+      },
+      err_msg: ""
     };
   },
   methods: {
-    logIn() {
-      this.$router.push("/dashboard");
+    logIn(formName) {
+      let vm = this;
+      this.$refs[formName].validate(async valid => {
+        if (valid) {
+          vm.logining = true;
+          let err = await store.createUser(this.loginForm.username);
+          if (!err) {
+            vm.logining = false;
+            this.$router.push("/dashboard");
+          } else {
+            this.err_msg = err.info.error_description;
+          }
+        } else {
+          return false;
+        }
+      });
     }
   }
 };
@@ -44,5 +73,10 @@ export default {
 
 .login-btn {
   width: 100%;
+}
+
+.error-text {
+  color: red;
+  text-align: left;
 }
 </style>
